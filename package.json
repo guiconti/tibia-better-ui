@@ -8,7 +8,7 @@
   },
   "scripts": {
     "electron": "electron dist/server/index.js",
-    "build": "tsc && sass --version && copyfiles index.html dist && sass index.scss dist/index.css",
+    "build": "tsc && sass --version && copyfiles index.html preferences.json dist && sass index.scss dist/index.css",
     "start": "nodemon -e ts,html,scss --exec \"npm run build && npm run electron\"",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
   },
