@@ -1,1 +1,1 @@
-declare module 'process-list'
+declare module 'active-window'

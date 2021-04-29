@@ -1,19 +1,19 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow } from 'electron';
 import getWindow from './core/getAppWindow';
+import setupHandlers from './core/setupHandlers';
 import registerShortcuts from './core/registerShortcuts';
-
-// ipcMain.handle('perform-action', (event, ...args) => {
-ipcMain.handle('perform-action', () => {
-  // ... do actions on behalf of the Renderer
-  return 1;
-});
+import { setupWindowLoop } from './core/windowSetup';
 
 app.whenReady().then(() => {
-  getWindow();
+  setupHandlers();
+  const window = getWindow();
+  window.moveTop();
   registerShortcuts();
+  setupWindowLoop();
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
-      getWindow();
+      const window = getWindow();
+      window.moveTop();
     }
   });
 });

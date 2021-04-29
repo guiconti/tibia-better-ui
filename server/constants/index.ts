@@ -1,4 +1,4 @@
 import errors from './errors';
-import messages from './messages';
+import events from './events';
 
-export { errors, messages };
+export { errors, events };
