@@ -20,6 +20,6 @@ export default function getWindow(): BrowserWindow {
     focusable: false,
   });
   win.setIgnoreMouseEvents(true);
-  win.loadFile('../../index.html');
+  win.loadFile('../index.html');
   return win;
 }

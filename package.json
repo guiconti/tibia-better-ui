@@ -8,16 +8,18 @@
   },
   "scripts": {
     "electron": "electron dist/server/index.js",
-    "build": "tsc",
-    "start": "nodemon -e ts --exec \"npm run build && npm run electron\"",
+    "build": "tsc && sass --version && copyfiles index.html dist && sass index.scss dist/index.css",
+    "start": "nodemon -e ts,html,scss --exec \"npm run build && npm run electron\"",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "active-win": "7.1.0",
+    "copyfiles": "2.4.1",
     "dotenv": "^8.0.0",
-    "log-champ": "2.0.0"
+    "log-champ": "2.0.0",
+    "sass": "1.32.12"
   },
   "devDependencies": {
     "@types/node": "14.6.1",

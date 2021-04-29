@@ -10,13 +10,19 @@
     <link rel="stylesheet" href="index.css">
   </head>
   <body>
-    <div class="cooldowns">
-      <h1>Hello World!</h1>
-      <p>
-        We are using Node.js <span id="node-version"></span>, Chromium
-        <span id="chrome-version"></span>, and Electron
-        <span id="electron-version"></span>.
-      </p>
+    <div class="hud">
+      <div class="cooldowns">
+        <div class="cooldowns__left">
+          <div class="arc arc__left">
+            <div class="arc arc__left arc--progress"></div>
+          </div>
+        </div>
+        <div class="cooldowns__right">
+          <div class="arc arc__right">
+            <div class="arc arc__right arc--progress"></div>
+          </div>
+        </div>
+      </div>
     </div>
   </body>
 </html>

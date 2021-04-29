@@ -10,7 +10,9 @@
   },
   "watch": [
     "server/",
-    "tools/"
+    "tools/",
+    "index.html",
+    "index.scss"
   ],
   "ext": "js,json,ts"
 }

@@ -1,0 +1,60 @@
+:root {
+  --grey800: #2B353A;
+  --grey900: #151D21;
+  --border: var(--grey900);
+}
+
+body {
+  /* Hide scrolls. TODO: Check if scrolls appearing is actually a bug. */
+  overflow: hidden;
+}
+
+.hud {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  /* TODO: This will have to be dynamic */
+  left: 982px;
+  top: 60px;
+  width: 1879px;
+  height: 1377px;
+  // background: white;
+}
+
+.cooldowns {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  margin: 0 auto 50px;
+  // background: white;
+  &__left, &__right {
+    display: flex;
+    align-items: center;
+    width: 606px;
+  }
+  &__left {
+    // background: white;
+    justify-content: flex-end;
+
+  }
+  &__right {
+    // background: black;
+    justify-content: flex-start;
+  }
+}
+
+.arc {
+  height: 470px;
+  width: 20px;
+  border: 2px solid var(--border);
+  transform: rotate(180deg);
+  &--progress {
+    border: none;
+    height: 10%;
+    width: 20px;
+    background-color: red;
+  }
+}

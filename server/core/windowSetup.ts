@@ -30,22 +30,22 @@ const setupWindow = async () => {
   return new Promise<void>(async (resolve, reject) => {
     const window = getWindow();
     if (!window) {
-      return reject();
+      return reject('Failed on get window');
     }
     const activeWindow = await getActiveWindow();
     if (!activeWindow) {
-      return reject();
+      return reject('Failed on get active window.');
     }
-    if (activeWindow.title !== 'Tibia') {
-      if (window.isVisible()) {
-        window.hide();
-      }
-      return resolve();
-    }
-    if (!window.isVisible()) {
-      window.show();
-      window.moveTop();
-    }
+    // if (activeWindow.title !== 'Tibia') {
+    //   if (window.isVisible()) {
+    //     window.hide();
+    //   }
+    //   return resolve();
+    // }
+    // if (!window.isVisible()) {
+    //   window.show();
+    //   window.moveTop();
+    // }
     const { width, height, x, y } = activeWindow.bounds;
     resizeWindow({width, height, x, y});
     return resolve();
@@ -53,7 +53,11 @@ const setupWindow = async () => {
 };
 
 export const setupWindowLoop = async () => {
-  await setupWindow();
+  try {
+    await setupWindow();
+  } catch (err) {
+    console.log(err);
+  }
   await sleep(100);
   setupWindowLoop();
 }
