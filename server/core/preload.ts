@@ -13,22 +13,26 @@ window.addEventListener('DOMContentLoaded', async () => {
     [events.ITEM_COOLDOWN]: {
       active: false,
       timer: 1000,
-      side: 'left'
+      side: 'left',
+      color: '#6545E6',
     },
     [events.ATTACK_COOLDOWN]: {
       active: false,
       timer: 2000,
-      side: 'right'
+      side: 'right',
+      color: '#D1345B',
     },
     [events.HEALING_COOLDOWN]: {
       active: false,
       timer: 1000,
-      side: 'left'
+      side: 'left',
+      color: '#00BDA1',
     },
     [events.SUPPORT_COOLDOWN]: {
       active: false,
       timer: 2000,
-      side: 'right'
+      side: 'right',
+      color: '#DB662C',
     },
   };
 
@@ -46,11 +50,12 @@ window.addEventListener('DOMContentLoaded', async () => {
     resizeBody({ width, height });
   };
 
-  const arcGenerator = (side: string = 'left') => {
+  const arcGenerator = (side: string = 'left', color: string = 'red') => {
     const arc = document.createElement('div');
     arc.className += `arc arc__${side}`;
     const arcFilled = document.createElement('div');
     arcFilled.className += `arc__${side} arc--progress`;
+    arcFilled.style.backgroundColor = color;
     arc.append(arcFilled);
     return {
       arc,
@@ -58,11 +63,11 @@ window.addEventListener('DOMContentLoaded', async () => {
     };
   };
 
-  const cooldownGenerator = async (timer: number = 1000, side: string = 'left') => {
+  const cooldownGenerator = async (timer: number = 1000, side: string = 'left', color: string = 'red') => {
     return new Promise<void>(async (resolve) => {
       const ticks = 100;
       let currentCooldown = 100;
-      const { arc, arcFilled } = arcGenerator(side);
+      const { arc, arcFilled } = arcGenerator(side, color);
       const selectedCooldown = side === 'left' ? cooldownsLeft : cooldownsRight;
       selectedCooldown?.append(arc);
       while (currentCooldown > 0) {
@@ -85,7 +90,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         return;
       }
       cooldowns[event].active = true;
-      await cooldownGenerator(cooldowns[event].timer, cooldowns[event].side);
+      await cooldownGenerator(cooldowns[event].timer, cooldowns[event].side, cooldowns[event].color);
       if (registerKey) {
         ipcRenderer.invoke(events.REGISTER_HOTKEY, event, hotkey);
       }
