@@ -1,5 +1,7 @@
 import { ipcMain } from 'electron';
 import getActiveWindow from 'active-win';
+import fs from 'fs';
+import path from 'path'
 import { events } from '../constants';
 
 export default async () => {
@@ -13,9 +15,9 @@ export default async () => {
     return { width, height };
   });
 
-  // ipcMain.handle('perform-action', (event, ...args) => {
-  ipcMain.handle('perform-action', () => {
-    // ... do actions on behalf of the Renderer
-    return 1;
+  ipcMain.handle(events.GET_PREFERENCES, () => {
+    const preferencesText = fs.readFileSync(path.join(__dirname, '../../preferences.json'), 'utf-8');
+    const preferences = JSON.parse(preferencesText);
+    return { ...preferences };
   });
 };

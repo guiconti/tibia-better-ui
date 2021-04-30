@@ -8,4 +8,5 @@ export default {
   ATTACK_RUNE_COOLDOWN: 'cooldown::attack_rune',
   HEALING_RUNE_COOLDOWN: 'cooldown::healing_rune',
   SUPPORT_RUNE_COOLDOWN: 'cooldown::support_rune',
+  GET_PREFERENCES: 'preferences::get',
 };

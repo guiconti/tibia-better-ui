@@ -14,25 +14,25 @@ window.addEventListener('DOMContentLoaded', async () => {
       active: false,
       timer: 1000,
       side: 'left',
-      color: '#6545E6',
+      color: 'yellow',
     },
     [events.ATTACK_COOLDOWN]: {
       active: false,
       timer: 2000,
       side: 'right',
-      color: '#D1345B',
+      color: 'red',
     },
     [events.HEALING_COOLDOWN]: {
       active: false,
       timer: 1000,
       side: 'left',
-      color: '#00BDA1',
+      color: 'green',
     },
     [events.SUPPORT_COOLDOWN]: {
       active: false,
       timer: 2000,
       side: 'right',
-      color: '#DB662C',
+      color: 'purple',
     },
   };
 
@@ -48,6 +48,14 @@ window.addEventListener('DOMContentLoaded', async () => {
   const startupInvokers = async () => {
     const { width, height } = await ipcRenderer.invoke(events.WINDOW_RESIZE);
     resizeBody({ width, height });
+
+    const { colors } = await ipcRenderer.invoke(events.GET_PREFERENCES);
+    if (!colors) {
+      return;
+    }
+    Object.keys(colors).forEach(cooldown => {
+      cooldowns[cooldown].color = colors[cooldown];
+    });
   };
 
   const arcGenerator = (side: string = 'left', color: string = 'red') => {

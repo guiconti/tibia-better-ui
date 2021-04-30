@@ -7,5 +7,11 @@
     "cooldown::attack_rune": ["F4"],
     "cooldown::healing_rune": [],
     "cooldown::support_rune": []
+  },
+  "colors": {
+    "cooldown::item": "#6545E6",
+    "cooldown::attack": "#D1345B",
+    "cooldown::healing": "#00BDA1",
+    "cooldown::support": "#DB662C"
   }
 }
