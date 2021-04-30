@@ -1,5 +1,11 @@
 {
   "hotkeys": {
-    "cooldown::potion": ["F1", "F2"]
+    "cooldown::item": ["F1", "F2"],
+    "cooldown::attack": ["F5", "F6", "F7"],
+    "cooldown::healing": ["F3", "1", "2", "3"],
+    "cooldown::support": ["F8", "F11", "F12", "CommandOrControl+4", "CommandOrControl+3", "Shift+1", "Shift+2", "Shift+3"],
+    "cooldown::attack_rune": ["F4"],
+    "cooldown::healing_rune": [],
+    "cooldown::support_rune": []
   }
 }
