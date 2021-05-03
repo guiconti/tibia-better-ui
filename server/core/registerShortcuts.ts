@@ -9,7 +9,7 @@ import { events } from '../constants';
 
 robot.setKeyboardDelay(0);
 
-const registerKey = (event: string, hotkey: string) => {
+const registerKey = (event: string, hotkey: string, customCooldowns: object[] = []) => {
   if (globalShortcut.isRegistered(hotkey)) {
     console.error('Duplicate hotkey error');
     return;
@@ -17,13 +17,19 @@ const registerKey = (event: string, hotkey: string) => {
   const module = {
     event,
     hotkey,
+    customCooldowns,
     registerFunction: async function() {
       if (!this) {
         return;
       }
       const window = getWindow();
       globalShortcut.unregister(this.hotkey);
-      window.webContents.send(this.event, this.hotkey);
+      window.webContents.send(this.event, this.hotkey, this.customCooldowns);
+      if (this.customCooldowns.length >= 0) {
+        this.customCooldowns.forEach((customCooldown) => {
+          window.webContents.send(events.CUSTOM_COOLDOWN, customCooldown);
+        });
+      }
       const adjustedKeys = this.hotkey.replace('CommandOrControl', 'control').toLowerCase();
       const keys = adjustedKeys.split('+');
       const key = keys[keys.length - 1];
@@ -40,7 +46,7 @@ const registerKey = (event: string, hotkey: string) => {
 
 // Called from webpage so we can reregister the hotkey after the event is done
 ipcMain.handle(events.REGISTER_HOTKEY, async (_event, ...args) => {
-  registerKey(args[0], args[1]);
+  registerKey(args[0], args[1], args[2]);
 });
 
 export default async () => {
@@ -64,6 +70,15 @@ export default async () => {
   Object.keys(preferences.hotkeys).forEach(event => {
     for (const hotkey of preferences.hotkeys[event]) {
       registerKey(event, hotkey);
+    }
+  });
+  Object.keys(preferences.customHotkeys).forEach(customHotkey => {
+    for (const hotkey of preferences.customHotkeys[customHotkey].keys) {
+      registerKey(
+        preferences.customHotkeys[customHotkey].event,
+        hotkey,
+        preferences.customHotkeys[customHotkey].customCooldowns
+      );
     }
   });
 }

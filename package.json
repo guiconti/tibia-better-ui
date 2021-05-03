@@ -19,7 +19,7 @@
     "copyfiles": "2.4.1",
     "dotenv": "^8.0.0",
     "log-champ": "2.0.0",
-    "robotjs": "0.6.0",
+    "robotjs": "git+https://github.com/Kyusung4698/robotjs.git",
     "sass": "1.32.12"
   },
   "devDependencies": {

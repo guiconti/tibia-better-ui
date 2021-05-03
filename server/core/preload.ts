@@ -36,6 +36,8 @@ window.addEventListener('DOMContentLoaded', async () => {
     },
   };
 
+  const customActiveCooldowns: { [ key: string ]: number; } = {};
+
   const sleep = (ms: number) => {
     return new Promise(resolve => setTimeout(resolve, ms));
   };
@@ -71,25 +73,35 @@ window.addEventListener('DOMContentLoaded', async () => {
     };
   };
 
-  const cooldownGenerator = async (timer: number = 1000, side: string = 'left', color: string = 'red') => {
+  const cooldownGenerator = async (timer: number = 1000, side: string = 'left', color: string = 'red', customId?: string) => {
     return new Promise<void>(async (resolve) => {
       const ticks = 100;
       let currentCooldown = 100;
       const { arc, arcFilled } = arcGenerator(side, color);
       const selectedCooldown = side === 'left' ? cooldownsLeft : cooldownsRight;
       selectedCooldown?.append(arc);
-      while (currentCooldown > 0) {
+      if (customId) {
+        customActiveCooldowns[customId] = currentCooldown;
+        while (customActiveCooldowns[customId] > 0) {
+          arcFilled.style.height = `${customActiveCooldowns[customId]}%`;
+          await sleep(timer / ticks);
+          customActiveCooldowns[customId] -= 100 / ticks;
+        }
+        arcFilled.style.height = `${customActiveCooldowns[customId]}%`;
+      } else {
+        while (currentCooldown > 0) {
+          arcFilled.style.height = `${currentCooldown}%`;
+          await sleep(timer / ticks);
+          currentCooldown -= 100 / ticks;
+        }
         arcFilled.style.height = `${currentCooldown}%`;
-        await sleep(timer / ticks);
-        currentCooldown -= 100 / ticks;
       }
-      arcFilled.style.height = `${currentCooldown}%`;
       selectedCooldown?.removeChild(arc);
       return resolve();
     });
   };
 
-  const startCooldown = async (event: string, hotkey: string, registerKey: boolean = true) => {
+  const startCooldown = async (event: string, hotkey: string, customCooldowns: object[] = [], registerKey: boolean = true) => {
     return new Promise<void>(async (resolve) => {
       if (!cooldowns[event]) {
         return;
@@ -100,65 +112,83 @@ window.addEventListener('DOMContentLoaded', async () => {
       cooldowns[event].active = true;
       await cooldownGenerator(cooldowns[event].timer, cooldowns[event].side, cooldowns[event].color);
       if (registerKey) {
-        ipcRenderer.invoke(events.REGISTER_HOTKEY, event, hotkey);
+        ipcRenderer.invoke(events.REGISTER_HOTKEY, event, hotkey, customCooldowns);
       }
       cooldowns[event].active = false;
       return resolve();
     });
   };
 
+  const startCustomCooldown = async (cooldown: any) => {
+    return new Promise<void>(async (resolve) => {
+      if (customActiveCooldowns[cooldown.id] && customActiveCooldowns[cooldown.id] > 0) {
+        customActiveCooldowns[cooldown.id] = 100;
+        return resolve();
+      }
+      cooldownGenerator(cooldown.timer, cooldown.side, cooldown.color, cooldown.id);
+      return resolve();
+    });
+  };
+
   // TODO: Implement item buffer
-  const itemCooldown = async (_event: any, hotkey: string, registerKey: boolean = true) => {
+  const itemCooldown = async (_event: any, hotkey: string, customCooldowns: object[], registerKey: boolean = true) => {
     return new Promise<void>(async (resolve) => {
-      await startCooldown(events.ITEM_COOLDOWN, hotkey, registerKey);
+      await startCooldown(events.ITEM_COOLDOWN, hotkey, customCooldowns, registerKey);
       return resolve();
     });
   };
 
-  const attackCooldown = async (_event: any, hotkey: string, registerKey: boolean = true) => {
+  const attackCooldown = async (_event: any, hotkey: string, customCooldowns: object[], registerKey: boolean = true) => {
     return new Promise<void>(async (resolve) => {
-      await startCooldown(events.ATTACK_COOLDOWN, hotkey, registerKey);
+      await startCooldown(events.ATTACK_COOLDOWN, hotkey, customCooldowns, registerKey);
       return resolve();
     });
   };
 
-  const healingCooldown = async (_event: any, hotkey: string, registerKey: boolean = true) => {
+  const healingCooldown = async (_event: any, hotkey: string, customCooldowns: object[], registerKey: boolean = true) => {
     return new Promise<void>(async (resolve) => {
-      await startCooldown(events.HEALING_COOLDOWN, hotkey, registerKey);
+      await startCooldown(events.HEALING_COOLDOWN, hotkey, customCooldowns, registerKey);
       return resolve();
     });
   };
 
-  const supportCooldown = async (_event: any, hotkey: string, registerKey: boolean = true) => {
+  const supportCooldown = async (_event: any, hotkey: string, customCooldowns: object[], registerKey: boolean = true) => {
     return new Promise<void>(async (resolve) => {
-      await startCooldown(events.SUPPORT_COOLDOWN, hotkey, registerKey);
+      await startCooldown(events.SUPPORT_COOLDOWN, hotkey, customCooldowns, registerKey);
       return resolve();
     });
   };
 
-  const attackRuneCooldown = async (_event: any, hotkey: string) => {
+  const attackRuneCooldown = async (_event: any, hotkey: string, customCooldowns: object[]) => {
     return new Promise<void>(async (resolve) => {
-      itemCooldown(_event, hotkey, false);
-      await attackCooldown(_event, hotkey, false);
+      itemCooldown(_event, hotkey, customCooldowns, false);
+      await attackCooldown(_event, hotkey, customCooldowns, false);
       ipcRenderer.invoke(events.REGISTER_HOTKEY, events.ATTACK_RUNE_COOLDOWN, hotkey);
       return resolve();
     });
   };
 
-  const healingRuneCooldown = async (_event: any, hotkey: string) => {
+  const healingRuneCooldown = async (_event: any, hotkey: string, customCooldowns: object[]) => {
     return new Promise<void>(async (resolve) => {
-      itemCooldown(_event, hotkey, false);
-      await healingCooldown(_event, hotkey, false);
+      itemCooldown(_event, hotkey, customCooldowns, false);
+      await healingCooldown(_event, hotkey, customCooldowns, false);
       ipcRenderer.invoke(events.REGISTER_HOTKEY, events.HEALING_RUNE_COOLDOWN, hotkey);
       return resolve();
     });
   };
 
-  const supportRuneCooldown = async (_event: any, hotkey: string) => {
+  const supportRuneCooldown = async (_event: any, hotkey: string, customCooldowns: object[]) => {
     return new Promise<void>(async (resolve) => {
-      itemCooldown(_event, hotkey, false);
-      await supportCooldown(_event, hotkey, false);
+      itemCooldown(_event, hotkey, customCooldowns, false);
+      await supportCooldown(_event, hotkey, customCooldowns, false);
       ipcRenderer.invoke(events.REGISTER_HOTKEY, events.SUPPORT_RUNE_COOLDOWN, hotkey);
+      return resolve();
+    });
+  };
+
+  const customCooldown = async (_event: any, customCooldown: any) => {
+    return new Promise<void>(async (resolve) => {
+      startCustomCooldown(customCooldown);
       return resolve();
     });
   };
@@ -174,6 +204,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   ipcRenderer.on(events.ATTACK_RUNE_COOLDOWN, attackRuneCooldown);
   ipcRenderer.on(events.HEALING_RUNE_COOLDOWN, healingRuneCooldown);
   ipcRenderer.on(events.SUPPORT_RUNE_COOLDOWN, supportRuneCooldown);
+  ipcRenderer.on(events.CUSTOM_COOLDOWN, customCooldown);
 
   startupInvokers();
 });

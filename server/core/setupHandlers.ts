@@ -5,7 +5,6 @@ import path from 'path'
 import { events } from '../constants';
 
 export default async () => {
-
   ipcMain.handle(events.WINDOW_RESIZE, async () => {
     const activeWindow = await getActiveWindow();
     if (!activeWindow) {

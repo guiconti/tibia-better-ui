@@ -3,10 +3,30 @@
     "cooldown::item": ["F1", "F2"],
     "cooldown::attack": ["F5", "F6", "F7"],
     "cooldown::healing": ["F3", "1", "2", "3"],
-    "cooldown::support": ["F8", "F11", "F12", "CommandOrControl+4", "CommandOrControl+3", "Shift+1", "Shift+2", "Shift+3"],
+    "cooldown::support": ["F8", "F11", "F12", "CommandOrControl+4", "CommandOrControl+3", "Shift+2", "Shift+3"],
     "cooldown::attack_rune": ["F4"],
     "cooldown::healing_rune": [],
     "cooldown::support_rune": []
+  },
+  "customHotkeys": {
+    "ultamoVita": {
+      "event": "cooldown::support", 
+      "keys": ["Shift+1"],
+      "customCooldowns": [
+        {
+          "id": "utamo_vita_0",
+          "timer": 14000,
+          "side": "right",
+          "color": "red"
+        },
+        {
+          "id": "utamo_vita_1",
+          "timer": 180000,
+          "side": "right",
+          "color": "pink"
+        }
+      ]
+    }
   },
   "colors": {
     "cooldown::item": "#6545E6",
